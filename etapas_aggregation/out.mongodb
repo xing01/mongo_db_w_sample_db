@@ -1,0 +1,50 @@
+//Cuales son los barrios mas costosos y guardar el resultado de esta consulta
+
+use('sample_airbnb')
+
+//debes recordar llamar despues de db. la tabla
+db.listingsAndReviews.aggregate([
+
+    {
+        $sort: {
+            "address.market": 1, //ascendente
+            price: -1
+
+        }
+    },
+
+
+    {
+        $group: {
+            _id: "$address.market", //campo por el que se va a agrupar
+            mostExpensive: {
+                $first: {
+                        name: "$name",
+                        price: "$price"
+                }
+            },
+
+
+        }
+    },
+
+
+    { $out: "propiedadesMasCostosas" }, //crear una nueva tabla/coleccion
+
+
+
+
+
+])
+
+
+
+/*
+Almacenar el resultado de las consultas con OUT
+Importante para reportes
+Por defecto se almacenará por defecto en el path de la tabla
+out debe ser la ult etapa, despues de probar todo
+Si en out repetiste el nombre, la coleccion se va a reescribir y no te va a avisar
+
+
+*/

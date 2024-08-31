@@ -1,0 +1,66 @@
+/*
+    *Filtrar los que esten a N distancia del punto
+    *Dado un punto en el mapa, sacar el calculo por cama 
+    Cuales son mas cara y mas barato segun distancias
+*/
+
+use('sample_airbnb')
+
+//debes recordar llamar despues de db. la tabla
+db.listingsAndReviews.aggregate([
+
+    {
+        $geoNear: {
+            near: { type: 'Point', coordinates: [-73.95552676483872, 40.79948939486901] },
+            distanceField: 'distancia',
+            maxDistance: 30000,
+            spherical: true
+        }
+    },
+
+    {
+        $match: {
+            beds: {
+                $ne: 0 //garantizamos que alm enos hay 1 cama} 
+            }
+        },
+
+    },
+
+    {
+        $project: {
+          
+          distancia:1,
+          precioPcama: {
+            $divide:["$price", "$beds"]
+          }
+        }
+    },
+
+    {
+        $group: {
+          _id: {
+            $cond:{
+                if: {
+                    $lte:["$distancia", 20000]
+                },
+                then: "menos2K",
+                else:"mas2K"
+            }
+          },
+
+          mediaPcama:{
+            $avg: "$precioPCama"
+          }
+        }
+    }
+])
+
+
+
+/*
+    Para busquedas geoespaciales (coordenadas georeferenciales)
+    Coordenadas georefrenciales = Sobre un mapa de bits, existe una capa de puntos georeferenciales
+    Si usamos esto, debe ser la primera etpa del pipeline
+
+*/
