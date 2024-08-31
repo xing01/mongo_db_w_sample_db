@@ -1,0 +1,8 @@
+//Para consultas sencillas
+use('sample_airbnb')
+
+db.listingsAndReviems.find({
+    last_review: { $gte: new Date('2019-01-01'),
+    $lte: new Date('2020-01-01')
+    }
+}).count();
