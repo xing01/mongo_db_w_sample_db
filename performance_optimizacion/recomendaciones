@@ -1,0 +1,15 @@
+OPTIMIZACION
+- Primero: planear tu agregación
+- considera si realmente necesitas usar aggregation frmework
+- considera el orden optimo de cada etapa
+- cuidado con los arrays ($unwind) y la memoria, debes ver que los arrays no sean tan extensos
+- usar funciones personalizadas solo cuando sean muy necesarias
+- usa datos que verifiquen la performance de la agregacion
+
+
+PROXIMOS PASOS
+- Usar dataset publicos
+
+https://www.data.gov.uk/dataset/e3939ef8-30c7-4ca8-9c7c-ad9475cc9b2f/anonymised-mot-tests-and-results
+https://github.com/pkdone/mongo-uk-car-data
+https://developer.sprinklr.com/docs/read/API_Overview
