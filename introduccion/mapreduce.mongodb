@@ -1,0 +1,39 @@
+/* MAP-reduce quedo obsoleto cuando aparecion Aggregation Framework, 
+    y este consume mucho recursos y memoria, por lo que mongo atlas lo tiene prohibido
+     */
+
+    use('sample_supplies')
+
+    //Funciòn Map
+    var mapFunction = function(){
+
+        if (this.storeLocation == "London"){
+            emit(this.purchaseMethod, this.customer.age);
+        }
+    };
+
+    //Función Reduce
+    var reduceFunction = function(key, values){
+        var total = 0;
+        var count = 0;
+        values.forEach(function(value){
+            total += value;
+            count += 1;
+
+        });
+
+        return total / count ;
+    };
+
+    var finalizeFunction = function(ket, reduceValue){
+        return Math.round(reduceValue);
+    };
+
+    db.sales.mapReduce(
+        mapFunction,
+        reduceFunction,
+        {
+            out: { inline:1},
+            finalice:finalizeFunction
+        }
+    )

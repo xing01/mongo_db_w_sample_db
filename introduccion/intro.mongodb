@@ -51,4 +51,6 @@ db.sales.aggregate([
 /*
     Agregation Framework es para consultas mas complejas.
     Hay que analizar opciones de costos y consultas
+
+    
 */
