@@ -1,0 +1,32 @@
+/*
+    Agrupar propiedades por califiaciones
+*/
+
+use('sample_airbnb')
+
+db.listingsAndReviews.aggregate([
+
+    {
+        $bucket: {
+            groupBy: "$review_scores.review_scores_rating",
+            boundaries: [0, 50, 70, 85, 100], //separar por estos grupos
+            default: "N/A",
+            output: {
+                count: { $sum: 1 }
+            }
+        }
+    }
+
+
+])
+
+
+
+
+
+/*
+    Para dar rangos 
+    BUCKET: LOS RANGOS SE DAN MANUALMENTE
+    BUCKET AUTO: LOS RANGOS LOS PONE EL SISTEMA
+
+*/

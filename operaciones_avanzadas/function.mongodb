@@ -1,0 +1,55 @@
+/*
+    Funcion para contar la cantidad de palabras en las descripciones
+    Mostrar la media de cantidad de palabras por tipo de propiedad
+*/
+
+use('sample_airbnb')
+
+//debes recordar llamar despues de db. la tabla
+db.listingsAndReviews.aggregate([
+
+    {
+        $addFields: {
+            wordCount: {
+                $function: {
+                    body: function (description) {
+
+                        //cuenta palabras de la descripcion
+                        if (description) {
+                            var words = description.split(' ');
+                            return words.length
+                        } else {
+                            return 0
+                        }
+
+
+                    },
+
+                    args: ["$description"],
+                    lang: "js"
+                }
+            }
+        }
+    },
+
+    {
+        $group: {
+            _id: "$property_type",
+            averageWordCount: { $avg: "$wordCount"}
+
+
+        }
+    }
+
+
+])
+
+
+
+
+
+/*
+    Funciones no se pueden usar en MONGODB ATLAS por sus limitaciones gratuitas
+    Las funciones son altamente costosas en recursos
+    Usar solo en casos especificos, cuando no se puede cubir con operadores por defecto de aggregation framwework
+    */

@@ -1,0 +1,66 @@
+/*
+    Media de facilidades para las calificaciones mayores a 90
+*/
+
+use('sample_airbnb')
+
+//debes recordar llamar despues de db. la tabla
+db.listingsAndReviews.aggregate([
+
+    { $match: { "review_scores.review_scores_rating": { $gt: 90 } } },
+    {
+        $addFields: {
+            amenitiesSize: { $size: "$amenities" }
+        }
+    },
+
+    {
+        $group: {
+            _id: null,
+            media: {
+                $accumulator: {
+                    init: function () {
+                        return { sum: 0, count: 0 };
+                    },
+                    accumulateArgs: ["$amenitiesSize"],
+
+                    accumulate: function (state, size) {
+                        return { sum: state.sum + size, count: state.count + 1 };
+                    },
+
+                    merge: function (state1, state2) {
+                        return {
+                            sum: state1.sum + state2.sum,
+                            count: state1.count + state2.count
+                        };
+                    },
+
+                    finalize: function (state) {
+                        return state.sum / state.count
+                    },
+
+                    lang: "js"
+                }
+            }
+        }
+    }
+
+
+])
+
+
+
+
+
+/*
+    ACCUMULATOR es la continuidad de function
+    permite tener funcion de funciones
+    Llaves:
+    init
+    accumulate
+    merge
+    finalize
+    lang
+    args    
+
+*/
