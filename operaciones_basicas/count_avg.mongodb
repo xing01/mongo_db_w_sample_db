@@ -1,0 +1,58 @@
+//Sacar media de precio por cada tipo de propiedad, y el total de las propiedad por cada tipo de propiedad en airbnb
+
+use('sample_airbnb')
+
+//debes recordar llamar despues de db. la tabla
+db.listingsAndReviews.aggregate([
+    { $match: { "address.country_code": "US" } },
+    { $sort: { property_type: 1, price: 1 } },
+    {
+        $group: {
+            _id: "$property_type",
+            countProperties: { $sum:1},
+            avgPrice: {$avg: "$price"},
+            masBajo: {
+
+                $first: {
+                    nombre: "$name",
+                    precio: "$price",
+                    direccion: "$address"
+                },
+
+            },
+
+            masAlto: {
+
+                $last: {
+                    nombre: "$name",
+                    precio: "$price",
+                    direccion: "$address"
+                },
+
+            },
+
+        },
+    },
+
+    {
+        $project: {
+            "_id":0, //inhabilita el campo
+            "Tipo de propiedad": "$_id",
+            "Cantidad de propiedades": "$countProperties",
+            "Precio promedio de propiedades": "$avgPrice",
+            "Menor precio": "$masBajo.precio",
+            "Mayor precio": "$masAlto.precio"
+        }
+
+    }
+
+
+
+])
+
+/*
+Los operadores por lo general se usan dentro de gropup
+Count: cuenta
+Avg: promedia
+
+*/

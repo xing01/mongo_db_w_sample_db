@@ -1,0 +1,76 @@
+//Quieren un formato especifico de los datos
+
+use('sample_airbnb')
+
+//debes recordar llamar despues de db. la tabla
+db.listingsAndReviews.aggregate([
+    { $match: { "address.country_code": "US" } },
+    { $sort: { property_type: 1, price: 1 } },
+    {
+        $group: {
+            _id: "$property_type",
+            countProperties: { $sum: 1 },
+            avgPrice: { $avg: "$price" },
+            masBajo: {
+
+                $first: {
+                    nombre: "$name",
+                    precio: "$price",
+                    direccion: "$address"
+                },
+
+            },
+
+            masAlto: {
+
+                $last: {
+                    nombre: "$name",
+                    precio: "$price",
+                    direccion: "$address"
+                },
+
+            },
+
+        },
+    },
+
+    {
+        $set: {
+
+            "Tipo de propiedad": "$_id",
+            "Cantidad de propiedades": "$countProperties",
+            "Precio promedio de propiedades": { $round: ["$avgPrice", 2] },
+            "Propiedades destacadas": [
+                {
+                    "Tipo": "Mas bajo",
+                    "Nombre": "$masBajo.nombre",
+                    "Precio": "$masBajo.precio"
+                },
+
+                {
+                    "Tipo": "Mas Alto",
+                    "Nombre": "$masAlto.nombre",
+                    "Precio": "$masAlto.precio"
+                },
+            ]
+
+        }
+
+    },
+
+    {//excluir campos duplicados
+        $project: {_id:0, avgPrice:0, countProperties:0, masBajo:0, masAlto:0
+
+        }
+    }
+
+
+
+])
+
+/*
+Es similar a project, pero el operador SET incluye por defecto todos los campos
+Cuando requieras eliminar o hacer cambios drasticos usa project
+Cuando quieras agregar usa set
+
+*/

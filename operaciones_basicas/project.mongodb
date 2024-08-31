@@ -1,0 +1,52 @@
+//Quieren un formato especifico de los datos
+
+use('sample_airbnb')
+
+//debes recordar llamar despues de db. la tabla
+db.listingsAndReviews.aggregate([
+    { $match: { "address.country_code": "US" } },
+    { $sort: { property_type: 1, price: 1 } },
+    {
+        $group: {
+            _id: "$property_type",
+            masBajo: {
+
+                $first: {
+                    nombre: "$name",
+                    precio: "$price",
+                    direccion: "$address"
+                },
+
+            },
+
+            masAlto: {
+
+                $last: {
+                    nombre: "$name",
+                    precio: "$price",
+                    direccion: "$address"
+                },
+
+            },
+
+        },
+    },
+
+    {
+        $project: {
+            "_id":0, //inhabilita el campo
+            "Tipo de propiedad": "$_id",
+            "Menor precio": "$masBajo.precio",
+            "Mayor precio": "$masAlto.precio"
+        }
+
+    }
+
+
+
+])
+
+/*
+Puedes usar project mas de 1 vez
+
+*/

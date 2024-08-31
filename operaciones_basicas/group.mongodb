@@ -1,0 +1,37 @@
+//Buscar la propiedad mas barata y la mas cara de cada tipo de propiedad en US
+use('sample_airbnb')
+
+//debes recordar llamar despues de db. la tabla
+db.listingsAndReviews.aggregate([
+    { $match: { "address.country_code": "US" } },
+    { $sort: { property_type: 1, price: 1 } },
+    {
+        $group: {
+            _id: "$property_type",
+            masBajo: {
+
+                $first: {
+                    nombre: "$name",
+                    precio: "$price",
+                    direccion: "$address"
+                }
+
+            },
+
+            masAlto: {
+
+                $last: {
+                    nombre: "$name",
+                    precio: "$price",
+                    direccion: "$address"
+                }
+
+            },
+
+        }
+    },
+
+   
+
+])
+

@@ -1,0 +1,13 @@
+//Buscar las 5 propiedades mas baratas en US
+
+use('sample_airbnb')
+
+//debes recordar llamar despues de db. la tabla
+db.listingsAndReviews.aggregate([
+    { $match: { "address.country_code": "US" } },
+    { $project: { "price":1, "address":1 } },
+    { $sort: { "price": 1 } },
+    { $limit: 5 },
+    
+])
+
